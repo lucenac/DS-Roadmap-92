@@ -1,0 +1,189 @@
+/* ── ModuleView ── */
+.moduleView {
+  padding: 24px 0 48px;
+}
+
+/* Back */
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.backBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ── Header card ── */
+.header {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 28px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  margin-bottom: 24px;
+}
+
+.headerTop {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.headerIcon {
+  font-size: 2.2rem;
+  flex-shrink: 0;
+}
+
+.headerInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.headerName {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.headerRange {
+  margin: 2px 0 0;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.headerPct {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--mod-color, rgba(255, 255, 255, 0.7));
+  flex-shrink: 0;
+}
+
+/* Progress bar */
+.progressBar {
+  width: 100%;
+  height: 6px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+
+.headerStats {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.headerStats strong {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ── Filters ── */
+.filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.82rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterBtn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.filterActive {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--active-color, rgba(255, 255, 255, 0.2));
+  color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 12px rgba(127, 119, 221, 0.1);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.filterActive .badge {
+  background: var(--active-color, rgba(255, 255, 255, 0.12));
+  color: #fff;
+}
+
+/* ── Day list ── */
+.dayList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.emptyMsg {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .header {
+    padding: 20px 16px;
+  }
+
+  .headerIcon {
+    font-size: 1.8rem;
+  }
+
+  .headerName {
+    font-size: 1.15rem;
+  }
+
+  .headerPct {
+    font-size: 1.3rem;
+  }
+}
