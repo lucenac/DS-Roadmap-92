@@ -9,6 +9,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 
@@ -79,6 +80,19 @@ export function AuthProvider({ children }) {
     }
   }
 
+  /**
+   * Envia e-mail de recuperação de senha
+   * @param {string} email - Email do usuário
+   */
+  async function resetPassword(email) {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      console.error('Erro ao redefinir senha:', error.message);
+      throw error;
+    }
+  }
+
   // Valores expostos pelo contexto para os componentes filhos
   const value = {
     user,
@@ -86,6 +100,7 @@ export function AuthProvider({ children }) {
     signUp,
     logIn,
     logOut,
+    resetPassword,
   };
 
   return (

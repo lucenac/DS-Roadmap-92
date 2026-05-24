@@ -1,23 +1,28 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import styles from './AuthModal.module.css';
 
 export default function AuthModal({ onClose, onLogin, onSignup }) {
-  const [mode, setMode] = useState('login'); // 'login' | 'signup'
+  const { resetPassword } = useAuth();
+  const [mode, setMode] = useState('login'); // 'login' | 'signup' | 'reset'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   const validate = () => {
     if (!email.trim()) return 'Insira seu e-mail.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       return 'E-mail inválido.';
-    if (password.length < 6) return 'A senha deve ter pelo menos 6 caracteres.';
-    if (mode === 'signup' && password !== confirmPassword)
-      return 'As senhas não coincidem.';
+    if (mode !== 'reset') {
+      if (password.length < 6) return 'A senha deve ter pelo menos 6 caracteres.';
+      if (mode === 'signup' && password !== confirmPassword)
+        return 'As senhas não coincidem.';
+    }
     return '';
   };
 
@@ -30,15 +35,20 @@ export default function AuthModal({ onClose, onLogin, onSignup }) {
     }
 
     setError('');
+    setMessage('');
     setLoading(true);
 
     try {
       if (mode === 'login') {
         await onLogin(email, password);
-      } else {
+        onClose();
+      } else if (mode === 'signup') {
         await onSignup(email, password);
+        onClose();
+      } else if (mode === 'reset') {
+        await resetPassword(email);
+        setMessage('E-mail de redefinição enviado! Verifique sua caixa de entrada.');
       }
-      onClose();
     } catch (err) {
       setError(err.message || 'Ocorreu um erro. Tente novamente.');
     } finally {
@@ -46,9 +56,10 @@ export default function AuthModal({ onClose, onLogin, onSignup }) {
     }
   };
 
-  const switchMode = () => {
-    setMode((m) => (m === 'login' ? 'signup' : 'login'));
+  const switchMode = (newMode) => {
+    setMode(newMode);
     setError('');
+    setMessage('');
     setConfirmPassword('');
   };
 
@@ -63,12 +74,14 @@ export default function AuthModal({ onClose, onLogin, onSignup }) {
         </button>
 
         <h2 className={styles.title}>
-          {mode === 'login' ? 'Bem-vindo de volta' : 'Criar conta'}
+          {mode === 'login' ? 'Bem-vindo de volta' : mode === 'signup' ? 'Criar conta' : 'Redefinir Senha'}
         </h2>
         <p className={styles.subtitle}>
           {mode === 'login'
             ? 'Entre para acompanhar seu progresso'
-            : 'Crie uma conta para salvar seu progresso'}
+            : mode === 'signup'
+            ? 'Crie uma conta para salvar seu progresso'
+            : 'Enviaremos um link para você redefinir sua senha'}
         </p>
 
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -84,16 +97,25 @@ export default function AuthModal({ onClose, onLogin, onSignup }) {
             />
           </label>
 
-          <label className={styles.label}>
-            <span>Senha</span>
-            <input
-              className={styles.input}
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </label>
+          {mode !== 'reset' && (
+            <label className={styles.label}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>Senha</span>
+                {mode === 'login' && (
+                  <button type="button" className={styles.switchBtn} style={{ fontSize: '0.8rem' }} onClick={() => switchMode('reset')}>
+                    Esqueci a senha
+                  </button>
+                )}
+              </div>
+              <input
+                className={styles.input}
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </label>
+          )}
 
           {mode === 'signup' && (
             <label className={styles.label}>
@@ -109,21 +131,24 @@ export default function AuthModal({ onClose, onLogin, onSignup }) {
           )}
 
           {error && <p className={styles.error}>{error}</p>}
+          {message && <p className={styles.success} style={{ color: 'var(--success)', fontSize: '0.875rem' }}>{message}</p>}
 
           <button className={styles.submitBtn} type="submit" disabled={loading}>
             {loading ? (
               <span className={styles.spinner} />
             ) : mode === 'login' ? (
               'Entrar'
-            ) : (
+            ) : mode === 'signup' ? (
               'Cadastrar'
+            ) : (
+              'Enviar e-mail'
             )}
           </button>
         </form>
 
         <p className={styles.switchText}>
           {mode === 'login' ? 'Não tem conta?' : 'Já tem conta?'}{' '}
-          <button className={styles.switchBtn} onClick={switchMode} type="button">
+          <button className={styles.switchBtn} onClick={() => switchMode(mode === 'login' ? 'signup' : 'login')} type="button">
             {mode === 'login' ? 'Cadastre-se' : 'Faça login'}
           </button>
         </p>

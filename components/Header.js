@@ -5,12 +5,12 @@ import { useAuth } from '../contexts/AuthContext';
 import styles from './Header.module.css';
 
 export default function Header({ onLoginClick }) {
-  const { user, logout } = useAuth();
+  const { user, logOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await logOut();
       setMenuOpen(false);
     } catch (err) {
       console.error('Logout failed:', err);

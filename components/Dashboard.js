@@ -1,14 +1,9 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { MODULES, SCHEDULE } from '@/lib/data';
+import { MODULES } from '@/lib/data';
+import { getCompletionStats } from '@/lib/progress';
 import styles from './Dashboard.module.css';
-
-/* ── helpers ── */
-function daysForModule(moduleId) {
-  if (moduleId === 0) return SCHEDULE.map((d) => d.day);
-  return SCHEDULE.filter((d) => d.module === moduleId).map((d) => d.day);
-}
 
 function useAnimatedCounter(target, duration = 800) {
   const [value, setValue] = useState(0);
@@ -64,20 +59,28 @@ function ProgressRing({ pct, size = 180, stroke = 10 }) {
 
 /* ── Dashboard ── */
 export default function Dashboard({ completedDays = [], onModuleSelect }) {
-  const totalDays = SCHEDULE.length;
-  const completedCount = completedDays.length;
-  const pct = totalDays > 0 ? Math.round((completedCount / totalDays) * 100) : 0;
+  const stats = useMemo(() => getCompletionStats(completedDays), [completedDays]);
+  
+  const totalDays = stats.totalDays;
+  const completedCount = stats.totalCompleted;
+  const pct = stats.percentage;
 
   const animatedPct = useAnimatedCounter(pct);
   const animatedDone = useAnimatedCounter(completedCount);
 
   const moduleStats = useMemo(() => {
-    return MODULES.filter((m) => m.id !== 0).map((mod) => {
-      const days = daysForModule(mod.id);
-      const done = days.filter((d) => completedDays.includes(d)).length;
-      return { ...mod, total: days.length, done, pct: days.length ? Math.round((done / days.length) * 100) : 0 };
-    });
-  }, [completedDays]);
+    return stats.moduleStats
+      .filter((m) => m.id !== 0)
+      .map((modStat) => {
+        const originalMod = MODULES.find((m) => m.id === modStat.id);
+        return {
+          ...originalMod,
+          total: modStat.total,
+          done: modStat.completed,
+          pct: modStat.percentage,
+        };
+      });
+  }, [stats]);
 
   return (
     <section className={styles.dashboard}>
